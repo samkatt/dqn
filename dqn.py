@@ -56,7 +56,9 @@ def learn(env,
     max_qvalues = tf.reduce_max(qvalues, axis=-1)
 
     td_error = rew_t_ph - onpolicy_qvalues
-    total_error = tf.reduce_mean(tf.square(td_error))
+    total_error = tf.reduce_mean(
+        utils.huber_loss(td_error, delta=np.sqrt(10.))
+    )
 
     # compute and clip gradients
     grads_and_vars = optimizer.compute_gradients(total_error, var_list=q_func_vars)
